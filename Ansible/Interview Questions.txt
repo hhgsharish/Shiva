@@ -1,0 +1,147 @@
+
+Ansible Interview Questions and Answers
+
+1. Explain modules in Ansible and explain a playbook to install an application.
+
+Modules in Ansible:
+ Modules are like small programs that do specific tasks, such as copying files, installing software, or managing services. 
+For example, the yum module installs packages on Red Hat-based systems, and the service module manages services.
+
+Playbook to Install an Application (e.g., Apache):
+- name: Install Apache on web server
+  hosts: webservers
+  tasks:
+    - name: Install Apache
+      yum:
+        name: httpd
+        state: present
+    - name: Start Apache service
+      service:
+        name: httpd
+        state: started
+        enabled: true
+
+
+2. Do you have experience with upgrading and patching? What level of patching and which tool do you use?
+Answer:
+ Yes, I have experience.
+Application level: Updating specific software.
+OS level: Applying patches to the operating system.
+ I use configuration management tools like Ansible to automate these tasks.
+
+3. Difference between play and playbook?
+Play: A play is a single execution plan, like a set of tasks for specific hosts.
+Playbook: A playbook is a file (YAML) that contains multiple plays.
+
+4. Deploying 3 environments (dev, prod, test) using a single module. How do you configure it?
+You can use variables and an inventory file to handle multiple environments. Use group_vars and separate the configurations.
+
+Example Inventory File:
+[dev]
+devserver ansible_host=192.168.1.10
+
+[test]
+testserver ansible_host=192.168.1.20
+
+[prod]
+prodserver ansible_host=192.168.1.30
+
+Playbook Example:
+- name: Deploy application
+  hosts: all
+  tasks:
+    - name: Install application
+      yum:
+        name: app_name
+        state: present
+
+Run it with --limit to target specific environments:
+ansible-playbook playbook.yml --limit dev
+
+
+5. How do you declare variables in Ansible? Write a sample playbook for it.
+Variables: You declare them in YAML files, inside the playbook, or in group_vars/host_vars.
+
+Playbook Example:
+- name: Install software using variables
+  hosts: all
+  vars:
+    package_name: httpd
+  tasks:
+    - name: Install the package
+      yum:
+        name: "{{ package_name }}"
+        state: present
+
+
+6. Can we manage Windows Nano Server using Ansible?
+Yes, Ansible can manage Windows Nano Server using the win_* modules. For example, win_package can install software, and win_service can manage services.
+
+7. Explain Ansible architecture.
+Control Node: Where you run Ansible commands.
+Managed Nodes: Machines that Ansible manages (e.g., servers).
+Inventory: A file listing the managed nodes.
+Modules: Small programs that execute tasks.
+Playbooks: YAML files that describe the automation steps.
+
+8. How will you copy files recursively on a host?
+Use the copy module with the recursive parameter.
+- name: Copy files recursively
+  hosts: all
+  tasks:
+    - name: Copy folder to remote host
+      copy:
+        src: /local/path/to/folder
+        dest: /remote/path/
+        remote_src: no
+
+
+9. Explain Ansible modules.
+yum/apt: Install packages.
+copy: Copy files.
+template: Deploy configuration files with variables.
+service: Start/stop services.
+user: Manage users.
+
+10. Explain Callback_plugin in Ansible.
+Callback plugins let you customize how Ansible outputs results. For example, you can format logs or send notifications after playbook execution.
+
+11. How many target hosts have you managed via Ansible?
+I have managed up to 200 hosts, but Ansible can scale to thousands.
+
+12. Explain Ansible facts.
+Ansible facts are system details like IP address, OS version, or CPU information, gathered by the setup module.
+
+13. Explain server provisioning and configuration management in your project.
+Provisioning: Use tools like Terraform to create servers.
+Configuration Management: Use Ansible to install software, configure files, and ensure the system is compliant.
+
+14. Write an Ansible playbook to install software.
+Example for installing nginx:
+- name: Install nginx
+  hosts: all
+  tasks:
+    - name: Install nginx
+      apt:
+        name: nginx
+        state: present
+    - name: Start nginx
+      service:
+        name: nginx
+        state: started
+
+
+15. Explain static and dynamic inventory.
+Static Inventory: A file (e.g., inventory.ini) listing all managed hosts.
+Dynamic Inventory: Scripts or plugins that fetch the inventory from a source like AWS or databases.
+
+16. How will you deploy a file to a minion from another minion?
+You can use Ansible's delegate_to feature. Example:
+- name: Copy file from one minion to another
+  hosts: minion1
+  tasks:
+    - name: Copy file
+      copy:
+        src: /path/to/file
+        dest: /path/on/other/minion
+      delegate_to: minion2
