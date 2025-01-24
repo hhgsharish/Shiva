@@ -1,0 +1,40 @@
+Error Codes:
+Response codes are typically used in HTTP/RESTful APIs to indicate the result of a request. Some commonly used categories include:
+
+2xx: Success
+
+200 OK: The request was successful.
+201 Created: The resource was successfully created.
+204 No Content: The request was successful, but there is no content to send back.
+
+3xx: Redirection
+
+301 Moved Permanently: The requested resource has been moved to a new URL.
+302 Found: The resource is temporarily located at a different URL.
+
+4xx: Client Errors
+
+400 Bad Request: The server couldn't understand the request due to invalid syntax.
+401 Unauthorized: Authentication is required and has failed.
+404 Not Found: The requested resource does not exist.
+
+5xx: Server Errors
+
+500 Internal Server Error: A generic server-side error.
+503 Service Unavailable: The server is currently unable to handle the request.
+
+Exit Codes
+
+Exit codes are used by scripts, programs, or commands to indicate their status after execution. These are typically found in UNIX/Linux systems:
+
+0: Success
+Indicates the program executed successfully.
+1-127: Errors
+1: General error.
+2: Misuse of shell built-ins.
+126: Command invoked cannot be executed.
+127: Command not found.
+128+N: Fatal Errors (signals)
+128: Invalid argument to exit.
+130: Script terminated by Ctrl+C (SIGINT).
+137: Killed by SIGKILL.
