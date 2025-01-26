@@ -1,0 +1,65 @@
+pipeline {
+    agent any
+
+    environment {
+        ARTIFACTORY_URL = "http://3.109.183.150:8082/artifactory/hello-world-war-libs-release/com/jfrog/my-jfrog-app/"
+      
+        TOMCAT_WEBAPPS_DIR = "/opt/apache-tomcat-10.1.34/webapps"
+        TOMCAT_HOME = "/opt/apache-tomcat-10.1.34"
+    }
+
+    stages {
+        stage('Download WAR file') {
+            steps {
+                script {
+                    // Using the credentials securely in the pipeline
+                    withCredentials([usernamePassword(credentialsId: 'Artifactory_Credentials', usernameVariable: 'USERNAME', passwordVariable: 'API_KEY')]) {
+                    
+                    
+                      // Download the WAR file
+                      sh """
+                        curl -u ${USERNAME}:${API_KEY} -O "http://3.109.183.150:8082/artifactory/hello-world-war-libs-release/com/jfrog/my-jfrog-app/hello-world-war-31.war"
+                      """
+
+                    
+                    }
+                }
+            }
+        }
+
+        stage('Deploy WAR to Tomcat') {
+            steps {
+                script {
+                    echo "Moving WAR file to Tomcat webapps directory..."
+                    sh """
+                        sudo mv hello-world-war-31.war ${TOMCAT_WEBAPPS_DIR}/
+                    """
+                }
+            }
+        }
+
+        stage('Restart Tomcat') {
+            steps {
+                script {
+                    echo "Restarting Tomcat to deploy WAR file..."
+        
+                    // Combine commands into one block to reduce the number of shell executions
+                    sh """
+                        sudo /opt/apache-tomcat-10.1.34/bin/shutdown.sh
+                        sleep 5
+                        sudo /opt/apache-tomcat-10.1.34/bin/startup.sh
+                    """
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment successful!'
+        }
+        failure {
+            echo 'Deployment failed!'
+        }
+    }
+}
