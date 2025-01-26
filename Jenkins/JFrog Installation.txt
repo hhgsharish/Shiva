@@ -1,0 +1,97 @@
+1. Setup the EC2 with t2.medium and open all port in security group with Ubuntu 22.04
+
+2.Update and upgrade
+
+sudo apt update
+sudo apt upgrade -y
+
+3. Install the postgress 
+
+sudo apt install postgresql postgresql-contrib -y
+
+4.Check the postgres status
+
+sudo systemctl status postgresql
+
+5.Switch to the postgres user to configure the PostgreSQL database:
+
+sudo -i -u postgres
+
+6.Create a new PostgreSQL database and user for Artifactory:
+
+createuser --interactive --pwprompt
+
+Username: artifactory
+Password: password
+
+createuser --interactive --pwprompt
+Enter name of role to add: artifactory
+Enter password for new role: 
+Enter it again: 
+Shall the new role be a superuser? (y/n) y
+
+7.Create database
+createdb artifactory_db
+
+8.grant permission
+psql
+------
+createdb artifactory_db
+postgres@ip-172-31-21-159:~$ psql
+psql (14.15 (Ubuntu 14.15-0ubuntu0.22.04.1))
+Type "help" for help.
+
+postgres=# GRANT ALL PRIVILEGES ON DATABASE artifactory_db TO artifactory;
+GRANT
+postgres=# \q
+-------
+
+9.exit
+
+
+10.Install JFrog Artifactory
+
+echo "deb https://releases.jfrog.io/artifactory/artifactory-debs xenial main" | tee -a /etc/apt/sources.list.d/artifactory.list
+curl -fsSL  https://releases.jfrog.io/artifactory/api/gpg/key/public|sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/artifactory.gpg
+
+11.Install the JFrog Artifactory package
+
+sudo apt update
+sudo apt install jfrog-artifactory-oss -y
+
+
+12.Configure Artifactory to Use PostgreSQL
+'
+/var/opt/jfrog/artifactory/etc/system.yaml
+
+type: postgresql
+  driver: org.postgresql.Driver
+  url: jdbc:postgresql://localhost:5432/artifactory_db
+  username: artifactory
+  password: <your_password>
+'
+sudo systemctl start artifactory
+sudo systemctl status artifactory
+
+Check the http://<EC2_Public_IP>:8081
+
+
+JFrog: 
+
+Username: admin
+Password: Manjunath!23
+
+token: cmVmdGtuOjAxOjE3NjgzOTM3MDM6bGVWRW92bzlFa1dHUzhZNmQwOEh5T3owY29o
+username: admin
+
+Add key and token inside github actions settings
+
+
+Add this to 
+curl -u "${{ secrets.ARTIFACTORY_USERNAME }}:${{ secrets.ARTIFACTORY_API_KEY }}" -T "target/hello-world-war-1.0.0.war" "http://13.127.139.48:8082/artifactory/hello-world-war-libs-release/com/jfrog/my-jfrog-app/hello-world-war-${{ github.run_number }}.war"
+
+
+curl -u admin:cmVmdGtuOjAxOjE3NjgzOTM3MDM6bGVWRW92bzlFa1dHUzhZNmQwOEh5T3owY29o "http://3.109.183.150:8082/artifactory/hello-world-war-libs-release/com/jfrog/my-jfrog-app/" | jq -r '.children | sort_by(.lastModified) | last | .uri'
+                      """, returnStdout: true).trim()
+					  
+curl -I -u admin:cmVmdGtuOjAxOjE3NjgzOTM3MDM6bGVWRW92bzlFa1dHUzhZNmQwOEh5T3owY29o  "http://3.109.183.150:8082/artifactory/api/storage/hello-world-war-libs-release/com/jfrog/my-jfrog-app/"					 
