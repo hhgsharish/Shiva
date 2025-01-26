@@ -1,0 +1,236 @@
+.bashrc: A configuration file that runs every time you open a new terminal session 
+(like when you open a terminal window or SSH into a server). 
+It is mainly used to set up the environment for interactive shell sessions, 
+like defining aliases, environment variables, and functions.
+
+.bash_profile: A configuration file that runs only once, when you log in (for login shells).
+It’s used for login-specific setups, such as setting environment variables 
+that should be available for all processes during your login session.
+
+In short:
+
+.bashrc: For interactive non-login shells (like terminal windows).
+.bash_profile: For login shells (like when you log in via SSH).
+
+bashrc:
+
+# Shortcut to list files
+alias ll='ls -lah'
+
+# Shortcut to update system (example for Ubuntu/Debian)
+alias update='sudo apt update && sudo apt upgrade -y'
+
+ll - Lists files in a detailed format.
+update - Runs system updates with a single command
+
+bashprofile
+
+# Display a greeting with system uptime
+echo "Welcome,The system uptime is: $(uptime -p)"
+
+================================================================================================================================================================
+bashprofile:
+
+
+# Display a welcome message
+echo "Welcome, Vikas! Today is $(date). Have a productive day!"
+
+
+create a folder and scripts startup_scripts/check_disk_space.sh.
+bash ~/startup_scripts/check_disk_space.sh 
+
+#!/bin/bash
+echo "Disk Space Status:"
+df -h | grep '/dev/sda1'
+
+
+===============================================================================================================================================================
+
+
+Shell scripts can leverage environment variables to modify their behavior dynamically based on the values of these variables.
+
+env or printenv
+
+Check Persistent Environment Variables
+cat ~/.bashrc
+cat ~/.bash_profile
+cat ~/.profile
+
+For System-Wide Variables:
+cat /etc/environment
+cat /etc/profile
+cat /etc/bash.bashrc
+
+======================================================================================================================================================
+
+#!/bin/bash
+
+# Check for the ROLE environment variable
+if [ -z "$ROLE" ]; then
+  echo "ERROR: ROLE is not set! Use 'developer', 'tester', or 'admin'."
+  exit 1
+fi
+
+echo "Configuring system for the $ROLE role on Ubuntu..."
+
+case "$ROLE" in
+  developer)
+    echo "Installing development tools..."
+    sudo apt update && sudo apt install -y git build-essential vim
+    ;;
+  tester)
+    echo "Installing testing tools..."
+    sudo apt update && sudo apt install -y curl wget jq
+    ;;
+  admin)
+    echo "Installing system administration tools..."
+    sudo apt update && sudo apt install -y htop net-tools
+    ;;
+  *)
+    echo "ERROR: Unknown ROLE: $ROLE"
+    exit 1
+    ;;
+esac
+
+echo "System configured successfully for the $ROLE role!"
+
+export ROLE=developer:tester:admin
+
+=========================================================================================================================================================
+#!/bin/bash
+
+# Check for MONITOR_MODE
+if [ -z "$MONITOR_MODE" ]; then
+  echo "ERROR: MONITOR_MODE is not set! Use 'cpu', 'memory', or 'disk'."
+  exit 1
+fi
+
+echo "Monitoring system resources in $MONITOR_MODE mode..."
+
+case "$MONITOR_MODE" in
+  cpu)
+    echo "Monitoring CPU usage..."
+    top -bn1 | grep "Cpu(s)"
+    ;;
+  memory)
+    echo "Monitoring Memory usage..."
+    free -h
+    ;;
+  disk)
+    echo "Monitoring Disk usage..."
+    df -h
+    ;;
+  *)
+    echo "ERROR: Unknown MONITOR_MODE: $MONITOR_MODE"
+    exit 1
+    ;;
+esac
+
+export MONITOR_MODE=cpu : memory : Disk :
+
+==========================================================================================================================================================
+
+#!/bin/bash
+
+# Check if AUTO_UPDATE is set
+if [ -z "$AUTO_UPDATE" ]; then
+  echo "ERROR: AUTO_UPDATE is not set! Use 'yes' or 'no'."
+  exit 1
+fi
+
+echo "System Update Preference: $AUTO_UPDATE"
+
+# Update system based on AUTO_UPDATE value
+if [ "$AUTO_UPDATE" == "yes" ]; then
+  echo "Starting system update and upgrade..."
+  sudo apt update && sudo apt upgrade -y
+  echo "System update completed successfully!"
+elif [ "$AUTO_UPDATE" == "no" ]; then
+  echo "System update skipped as per user preference."
+else
+  echo "ERROR: Invalid value for AUTO_UPDATE. Use 'yes' or 'no'."
+  exit 1
+fi
+
+# Optional: Clean up unused packages if AUTO_UPDATE is 'yes'
+if [ "$AUTO_UPDATE" == "yes" ]; then
+  echo "Cleaning up unused packages..."
+  sudo apt autoremove -y && sudo apt autoclean
+  echo "System cleanup completed successfully!"
+fi
+
+export AUTO_UPDATE=yes
+export AUTO_UPDATE=no
+
+==============================================================================================================================================
+
+#!/bin/bash
+
+# Check if USER_ACTION is set
+if [ -z "$USER_ACTION" ]; then
+  echo "ERROR: USER_ACTION is not set! Use 'add', 'delete', or 'info'."
+  exit 1
+fi
+
+# Check if USERNAME is set for 'add' and 'delete' actions
+if [[ "$USER_ACTION" != "info" ]] && [ -z "$USERNAME" ]; then
+  echo "ERROR: USERNAME is not set! Specify a username for 'add' or 'delete' actions."
+  exit 1
+fi
+
+echo "User Account Manager Script"
+echo "Action: $USER_ACTION"
+
+# Perform the action
+case "$USER_ACTION" in
+  add)
+    echo "Adding user: $USERNAME"
+    if id "$USERNAME" &>/dev/null; then
+      echo "ERROR: User '$USERNAME' already exists."
+    else
+      sudo useradd -m "$USERNAME"
+      echo "User '$USERNAME' added successfully!"
+    fi
+    ;;
+  delete)
+    echo "Deleting user: $USERNAME"
+    if id "$USERNAME" &>/dev/null; then
+      sudo userdel -r "$USERNAME"
+      echo "User '$USERNAME' deleted successfully!"
+    else
+      echo "ERROR: User '$USERNAME' does not exist."
+    fi
+    ;;
+  info)
+    echo "Fetching system user information..."
+    echo "-----------------------------------"
+    echo "Logged-in Users:"
+    who
+    echo ""
+    echo "All System Users:"
+    cut -d: -f1 /etc/passwd
+    ;;
+  *)
+    echo "ERROR: Invalid USER_ACTION. Use 'add', 'delete', or 'info'."
+    exit 1
+    ;;
+esac
+
+echo "Action '$USER_ACTION' completed successfully!"
+
+
+Add a New User : 
+export USER_ACTION=add
+export USERNAME=testuser
+./user_manager.sh
+
+Delete an Existing User : 
+export USER_ACTION=delete
+export USERNAME=testuser
+./user_manager.sh
+
+Display User Information: 
+export USER_ACTION=info
+./user_manager.sh
+
+==============================================================================================================================================================
