@@ -1,4 +1,4 @@
-This is related to the project 
+These jenkins files are related to the project 
 
 https://github.com/efsavage/hello-world-war
 
