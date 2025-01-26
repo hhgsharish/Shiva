@@ -1,0 +1,8 @@
+---
+- hosts: all
+  tasks:
+  - name: list_files
+    shell: ls
+    register: list_values
+  - debug:
+      var: list_values.stdout_lines

@@ -1,0 +1,15 @@
+---
+- hosts: all
+  # ignore_unreachable: true
+  tasks:
+  - name: list_files
+    shell: ls1
+    ignore_errors: true
+    register: list_values
+  - debug:
+      var: list_values.stdout_lines
+  - name: date_display
+    shell: date
+    register: today_date
+  - debug:
+      var: today_date.stdout_lines                                     

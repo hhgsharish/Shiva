@@ -1,0 +1,22 @@
+ansible all -m ping
+ansible Java_Servers  -m ping
+ansible Java_servers -m shell -a "touch /root/1.txt"
+ansible Java_servers -m shell -a "touch /1.txt"
+ansible Java_servers -m shell -a "touch /home/ubuntu/1.txt"
+ansible Java_servers -m shell -a "ls -l /home/ubuntu."
+ansible Java_servers -m shell -a "ls -l /home/ubuntu/"
+ansible Java_Servers -m shell -a "ls -l /home/ubuntu/"
+ansible Java_Servers -m copy -a "src=/etc/ansible/file.txt dest=/home/ubuntu/"
+ansible Java_Servers -m shell -a "ls -l /home/ubuntu/"
+ansible Java_Servers -m file -a "dest=/home/ubuntu/dir mode=777 owner=root group=root state=directory"
+ansible Java_Servers -m shell -a "ls -l /home/ubuntu/"
+ansible Java_Servers -m file -a "dest=/home/ubuntu/dir1 state=directory"
+ansible Java_Servers -m shell -a "ls -l /home/ubuntu/"
+ansible Java_Servers -m file -a "dest=/home/ubuntu/dir1 state=file"
+ansible Java_Servers -m copy -a 'dest=/home/ubuntu/abc content="state=file"'
+ansible Java_Servers -m shell -a "ls -l /home/ubuntu/"
+ansible Java_Servers -m shell -a "cat /home/ubuntu/abc"
+ansible Java_Servers -m apt -a "name=git state=present"
+ansible Java_Servers -m apt -a "name=git state=absent"
+ansible Java_Servers -m apt -a "name=git state=present"
+ansible Java_Servers -m file -a "path=/home/ubuntu/1.txt state=touch"
