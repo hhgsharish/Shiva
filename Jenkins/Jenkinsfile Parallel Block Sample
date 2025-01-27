@@ -1,0 +1,27 @@
+pipeline {
+    agent any
+    stages {
+        stage('Build and Test') {    //Stage 1 -- Parallel Stage which contans 2 stages inside it
+            parallel {   //Parallel Block Start 
+                stage('Build') {
+                    steps {
+                        echo 'Building the project...'
+                        // Add build steps here
+                    }
+                }
+                stage('Test') {
+                    steps {
+                        echo 'Running tests...'
+                        // Add test steps here
+                    }
+                }
+            } //Parallel Block End
+        }
+        stage('Deploy') {     // Stage 2
+            steps {
+                echo 'Deploying the application...'
+                // Add deploy steps here
+            }
+        }
+    }
+}
